@@ -1,0 +1,40 @@
+# Source files
+src/
+tests/
+*.test.ts
+
+# Config files
+tsconfig.json
+jest.config.js
+.eslintrc.js
+
+# Development files
+.github/
+.vscode/
+.idea/
+
+# Documentation (keep only essential ones)
+IMPROVEMENTS.md
+ARCHITECTURE.md
+
+# Build artifacts that shouldn't be in npm
+coverage/
+*.log
+*.tmp
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.travis.yml
+.circleci/
+azure-pipelines.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test outputs
+tests/output/
