@@ -104,19 +104,30 @@ function getBaseCSS(): string {
   box-sizing: border-box;
 }
 
+@page {
+  margin: 0;
+  size: A4;
+}
+
 html {
   font-size: 16px;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
-  padding: 1.5rem;
+  padding: 20mm 15mm;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
+  width: 100%;
+  height: 100%;
 }
 
 /* Mermaid container styles */
@@ -262,6 +273,7 @@ details[open] summary {
 
 /* Print styles */
 @media print {
+  html,
   body {
     padding: 0;
   }

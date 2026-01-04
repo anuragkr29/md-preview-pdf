@@ -5,10 +5,15 @@
 
 export const vscodeDarkTheme = `
 /* VS Code Dark Markdown CSS */
+html,
+body {
+  background-color: #1e1e1e;
+}
+
 .markdown-body {
   margin: 0;
+  padding: 1.5em 1em;
   color: #d4d4d4;
-  background-color: #1e1e1e;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif;
   font-size: 14px;
   line-height: 1.6;

@@ -44,16 +44,16 @@ function convertPDFOptions(options: PDFOptions = {}): PuppeteerPDFOptions {
   const pdfOptions: PuppeteerPDFOptions = {
     format: options.format || 'A4',
     printBackground: options.printBackground !== false,
-    margin: options.margin || {
-      top: '20mm',
-      right: '15mm',
-      bottom: '20mm',
-      left: '15mm',
+    margin: {
+      top: '0mm',
+      right: '0mm',
+      bottom: '0mm',
+      left: '0mm',
     },
     displayHeaderFooter: options.displayHeaderFooter || false,
     landscape: options.landscape || false,
     scale: options.scale || 1,
-    preferCSSPageSize: options.preferCSSPageSize || false,
+    preferCSSPageSize: true,
   };
 
   if (options.headerTemplate) {

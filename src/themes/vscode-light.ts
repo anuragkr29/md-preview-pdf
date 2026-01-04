@@ -5,10 +5,15 @@
 
 export const vscodeLightTheme = `
 /* VS Code Light Markdown CSS */
+html,
+body {
+  background-color: #ffffff;
+}
+
 .markdown-body {
   margin: 0;
+  padding: 1.5em 1em;
   color: #333333;
-  background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif;
   font-size: 14px;
   line-height: 1.6;

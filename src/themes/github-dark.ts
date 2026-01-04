@@ -5,12 +5,17 @@
 
 export const githubDarkTheme = `
 /* GitHub Dark Markdown CSS */
+html,
+body {
+  background-color: #0d1117;
+}
+
 .markdown-body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   margin: 0;
+  padding: 1.5em 1em;
   color: #c9d1d9;
-  background-color: #0d1117;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 16px;
   line-height: 1.5;
