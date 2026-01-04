@@ -3,27 +3,27 @@
  * Configures markdown-it with all necessary plugins for full markdown support
  */
 
-import MarkdownIt from 'markdown-it';
+import MarkdownIt, { Token } from 'markdown-it';
+import StateInline from 'markdown-it/lib/rules_inline/state_inline';
+import StateBlock from 'markdown-it/lib/rules_block/state_block';
 import highlightjs from 'highlight.js';
 import anchor from 'markdown-it-anchor';
 import footnote from 'markdown-it-footnote';
 import container from 'markdown-it-container';
 import katex from 'katex';
+import emojiPlugin from 'markdown-it-emoji';
+import taskListsPlugin from 'markdown-it-task-lists';
+import tocDoneRightPlugin from 'markdown-it-toc-done-right';
+import attrsPlugin from 'markdown-it-attrs';
 import { ConverterOptions } from '../types';
 import { logger } from '../utils';
-
-// These need require due to module export differences
-const emojiPlugin = require('markdown-it-emoji');
-const taskListsPlugin = require('markdown-it-task-lists');
-const tocDoneRightPlugin = require('markdown-it-toc-done-right');
-const attrsPlugin = require('markdown-it-attrs');
 
 /**
  * Custom plugin to render math equations with KaTeX
  */
 function mathPlugin(md: MarkdownIt): void {
   // Inline math: $...$
-  const inlineMathRule = (state: any, silent: boolean): boolean => {
+  const inlineMathRule = (state: StateInline, silent: boolean): boolean => {
     if (state.src[state.pos] !== '$') return false;
     if (state.src[state.pos + 1] === '$') return false; // Skip block math
 
@@ -49,7 +49,7 @@ function mathPlugin(md: MarkdownIt): void {
   };
 
   // Block math: $$...$$
-  const blockMathRule = (state: any, startLine: number, endLine: number, silent: boolean): boolean => {
+  const blockMathRule = (state: StateBlock, startLine: number, endLine: number, silent: boolean): boolean => {
     const startPos = state.bMarks[startLine] + state.tShift[startLine];
     const maxPos = state.eMarks[startLine];
 
@@ -181,7 +181,7 @@ function addContainers(md: MarkdownIt): void {
   containerTypes.forEach((type) => {
     md.use(container, type, {
       validate: (params: string) => params.trim().split(' ')[0] === type,
-      render: (tokens: any[], idx: number) => {
+      render: (tokens: Token[], idx: number) => {
         if (tokens[idx].nesting === 1) {
           const info = tokens[idx].info.trim();
           const title = info.slice(type.length).trim() || type.charAt(0).toUpperCase() + type.slice(1);
@@ -195,7 +195,7 @@ function addContainers(md: MarkdownIt): void {
   // Details/summary container
   md.use(container, 'details', {
     validate: (params: string) => params.trim().startsWith('details'),
-    render: (tokens: any[], idx: number) => {
+    render: (tokens: Token[], idx: number) => {
       if (tokens[idx].nesting === 1) {
         const info = tokens[idx].info.trim();
         const summary = info.slice(7).trim() || 'Details';
@@ -234,8 +234,8 @@ export function createMarkdownParser(options: ConverterOptions = {}): MarkdownIt
         .toLowerCase()
         .trim()
         .replace(/[\s]+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-'),
+        .replace(/[^\w-]+/g, '')
+        .replace(/-{2,}/g, '-'),
   });
 
   // Table of contents
@@ -249,7 +249,7 @@ export function createMarkdownParser(options: ConverterOptions = {}): MarkdownIt
 
   // Emoji support - use the full version
   if (options.emoji !== false) {
-    md.use(emojiPlugin.full || emojiPlugin);
+    md.use((emojiPlugin as unknown as { full: typeof emojiPlugin }).full || emojiPlugin);
   }
 
   // Footnotes

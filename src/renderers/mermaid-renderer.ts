@@ -202,9 +202,9 @@ export async function renderMermaidInBrowser(
       }, 30000);
 
       try {
-        // @ts-ignore - Mermaid is loaded via script tag
+        // @ts-expect-error - Mermaid is loaded via script tag
         if (typeof mermaid !== 'undefined') {
-          // @ts-ignore
+          // @ts-expect-error mermaid is loaded via script tag
           mermaid.initialize({
             startOnLoad: false,
             theme: opts.theme || 'default',
@@ -222,7 +222,7 @@ export async function renderMermaidInBrowser(
             }
           });
 
-          // @ts-ignore
+          // @ts-expect-error mermaid is loaded via script tag
           mermaid.run().then(() => {
             clearTimeout(timeout);
             resolve();

@@ -40,11 +40,15 @@ export function parseMarkdown(
   const { data: frontMatter, content } = parseFrontMatter(markdownContent);
 
   // Merge options from front matter
+  const themeName = (frontMatter.theme as string | undefined) || options.theme?.name || 'github';
+  const validThemeNames = ['github', 'github-dark', 'vscode-light', 'vscode-dark', 'custom'];
+  const finalThemeName = validThemeNames.includes(themeName) ? (themeName as 'github' | 'github-dark' | 'vscode-light' | 'vscode-dark' | 'custom') : 'github';
+
   const mergedOptions = {
     ...options,
     theme: {
       ...options.theme,
-      name: (frontMatter.theme as any) || options.theme?.name || 'github',
+      name: finalThemeName,
     },
     pdf: {
       ...options.pdf,
