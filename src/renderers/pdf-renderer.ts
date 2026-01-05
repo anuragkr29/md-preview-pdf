@@ -53,15 +53,15 @@ function convertPDFOptions(options: PDFOptions = {}): PuppeteerPDFOptions {
     scale: options.scale || 1,
   };
 
-  // Apply Puppeteer margins if provided (works alongside CSS margins)
-  if (options.margin) {
-    pdfOptions.margin = {
-      top: options.margin.top || '0mm',
-      right: options.margin.right || '0mm',
-      bottom: options.margin.bottom || '0mm',
-      left: options.margin.left || '0mm',
-    };
-  }
+  // Don't use Puppeteer margins - they create white borders
+  // Margins are handled via CSS padding on .markdown-body instead
+  // This allows background colors to extend to page edges
+  pdfOptions.margin = {
+    top: '0mm',
+    right: '0mm',
+    bottom: '0mm',
+    left: '0mm',
+  };
 
   if (options.headerTemplate) {
     pdfOptions.headerTemplate = options.headerTemplate;

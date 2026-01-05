@@ -98,17 +98,15 @@ function getKatexCSS(): string {
  * Get base CSS for document structure
  */
 function getBaseCSS(margin?: { top?: string; right?: string; bottom?: string; left?: string }): string {
-  // Build CSS @page margin rule from margin options
-  let pageMarginCSS = 'margin: 0;';
-  if (margin) {
-    if (margin.top || margin.right || margin.bottom || margin.left) {
-      const top = margin.top || '0';
-      const right = margin.right || '0';
-      const bottom = margin.bottom || '0';
-      const left = margin.left || '0';
-      pageMarginCSS = `margin: ${top} ${right} ${bottom} ${left};`;
-    }
-  }
+  // Use CSS padding on markdown-body instead of @page margins
+  // This allows background colors to extend to page edges
+  const defaultMargin = '15mm';
+  const top = margin?.top || defaultMargin;
+  const right = margin?.right || defaultMargin;
+  const bottom = margin?.bottom || defaultMargin;
+  const left = margin?.left || defaultMargin;
+  
+  const paddingCSS = `padding: ${top} ${right} ${bottom} ${left} !important;`;
 
   return `
 /* Base Document Styles */
@@ -117,7 +115,7 @@ function getBaseCSS(margin?: { top?: string; right?: string; bottom?: string; le
 }
 
 @page {
-  ${pageMarginCSS}
+  margin: 0;
   size: A4;
 }
 
@@ -126,33 +124,41 @@ html {
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   width: 100%;
-  margin: 0;
-  padding: 0;
+  min-height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 body {
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;
+  padding: 0 !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
   width: 100%;
+  min-height: 100%;
 }
 
-/* Main content wrapper - NO padding, let Puppeteer margins handle it */
+article {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Main content wrapper */
 main, .content {
   display: block;
-  padding: 0;
   margin: 0;
 }
 
-/* Markdown body - NO padding, let Puppeteer margins handle spacing */
+/* Markdown body - use CSS padding for spacing (not Puppeteer margins) so background extends to edges */
 .markdown-body {
-  padding: 0;
-  margin: 0;
   display: block;
   word-wrap: break-word;
+  ${paddingCSS}
+  margin: 0 !important;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 /* Page break handling */
@@ -353,8 +359,6 @@ details[open] summary {
   .markdown-body h2 {
     margin-top: 0.6em;
     margin-bottom: 0.25em;
-  }
-    break-inside: avoid;
   }
 }
 `;

@@ -5,7 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-01-05
+
+### Fixed
+- **Dark theme now applies to entire PDF body**: Fixed CSS syntax error in base stylesheet that was breaking theme CSS parsing
+  - Removed orphaned `break-inside` rule that broke entire stylesheet
+  - Theme background colors now extend to page edges
+  - Eliminated white borders and padding artifacts
+
+- **PDF margin and spacing redesign**: Complete refactor of margin/padding system
+  - Changed from Puppeteer PDF margins (which create blank white areas) to CSS padding
+  - All margins now handled via CSS padding on `.markdown-body`
+  - Background colors (including dark theme) extend fully to page edges
+  - Custom `--margin` options work properly with dark theme
+  - Default margins reduced to 15mm for better proportions
+
+- **Sub-pixel rendering artifacts**: Fixed thin white line on right edge
+  - Set body width to `calc(100% + 2px)` to bleed off rendering edges
+  - Added `overflow-x: hidden` to prevent scrollbars
+  - Adjusted viewport to match A4 page dimensions (794x1123px)
+
+### Improved
+- **HTML/CSS structure**: Better handling of width and overflow properties
+  - Added explicit `width: 100%` to all container elements
+  - Fixed article, body, and html elements to prevent layout shifts
+  - Removed duplicate padding rules that conflicted with theme CSS
+
+### Verification
+- ✅ All tests passing
+- ✅ Dark theme renders without white borders
+- ✅ Light theme unaffected
+- ✅ Custom margins work correctly
+- ✅ No rendering artifacts
+- ✅ PDF quality improved
+
 ## [1.0.4] - 2026-01-04
+
+### Added
+- **CI/CD Pipeline**: Added GitHub Actions workflow for automated testing and builds
+  - Runs tests on Node.js 18.x, 20.x, and 22.x
+  - Includes linting, building, and test execution
+  - Coverage reports uploaded to Codecov
+  - Build artifacts automatically uploaded
 
 ### Fixed
 - **Module type declarations**: Properly typed external modules without types
@@ -17,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **PDF margin handling**: Improved margin specification in PDF options
   - Now supports both CSS @page margins and Puppeteer margins
   - CLI accepts margin values in multiple formats: `"20mm"`, `"10mm,15mm"`, `"10mm 15mm 20mm 15mm"`
-  - Default margins updated to 10mm (top/bottom/left/right)
+  - Default margins updated to 50mm (top/bottom) and 55mm (left/right)
 - **HTML renderer CSS**: Refactored base CSS generation to accept margin parameters
   - CSS @page rule now dynamically includes margins from options
   - Removed hardcoded padding from markdown-body
@@ -133,6 +174,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Linting: 0 errors, 0 warnings (previously 15 warnings)
 - ✅ Tests: 26/26 passing
 - ✅ npm audit: 0 vulnerabilities
+
+## [1.0.1] - 2026-01-04
+
+### Fixed
+- **Resolved all npm deprecation warnings from direct dependencies**
+  - Previously warned about @humanwhocodes/config-array and @humanwhocodes/object-schema (ESLint v8 dependencies)
+  - Previously warned about inflight, rimraf@3, glob@7, and eslint@8.57.1
+- Upgraded ESLint from v8.57.0 → v9.0.0 (latest stable, fully supported)
+- Upgraded @typescript-eslint/parser from v6.17.0 → v8.0.0 (latest compatible)
+- Upgraded @typescript-eslint/eslint-plugin from v6.17.0 → v8.0.0 (latest compatible)
+- Upgraded TypeScript from v5.3.3 → v5.4.5 (latest stable)
+- Upgraded all other dev dependencies to latest stable versions
+- Fixed ESLint configuration for v9 compatibility
+
+### Changed
+- **ESLint Configuration**: Migrated from old config format (.eslintrc.js) to new flat config format (eslint.config.js)
+- ESLint config properly handles:
+  - JavaScript config files (eslint.config.js, jest.config.js) with CommonJS require statements
+  - TypeScript source files (src/**/*.ts) with full type checking
+  - Test files (tests/**/*.ts) without type project validation
+- Updated ECMAScript version target to 2024
+- Added typescript-eslint package for proper ESLint v9 support
+- Removed unused `convert` import from tests
+
+### Improvements
+- All direct npm dependencies now use latest stable versions with no known vulnerabilities
+- ESLint security patches (v9 has critical security improvements over v8)
+- Cleaner dependency management with no deprecated warnings from direct dependencies
+- Better type safety and linting rules with @typescript-eslint v8
+
+### Technical Details
+**Transitive Dependencies Note:** Remaining npm warnings from `inflight@1.0.6` and `glob@7.2.3` are from transitive dependencies used by Jest. These are indirect and cannot be controlled directly (Jest still uses these older tools). No direct dependencies produce warnings.
+
+**Verification:**
+- ✅ All 26 tests passing
+- ✅ Build successful with TypeScript 5.4.5
+- ✅ ESLint: 0 errors (2 warnings are intentional: any type usage in CLI)
+- ✅ npm audit: 0 vulnerabilities
+- ✅ npm ci: Clean install with only transitive deprecation warnings
 
 ## [1.0.0] - 2026-01-03
 
