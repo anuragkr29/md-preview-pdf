@@ -276,27 +276,6 @@ npm run dev -- input.md
 npm run lint
 ```
 
-## 📂 Project Structure
-
-```
-md-preview-pdf/
-├── src/
-│   ├── index.ts              # Main entry point
-│   ├── cli.ts                # CLI interface
-│   ├── converter.ts          # Main converter class
-│   ├── parser/               # Markdown parsing
-│   ├── renderers/            # HTML/PDF/Mermaid rendering
-│   ├── themes/               # CSS themes
-│   ├── utils/                # Utilities
-│   └── types/                # TypeScript types
-├── tests/
-│   ├── samples/              # Test markdown files
-│   └── *.test.ts             # Test files
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
 ## 🔧 API Reference
 
 ### Converter Class
@@ -348,6 +327,101 @@ interface ConverterOptions {
   debug?: boolean;            // Debug mode
 }
 ```
+## 💻 System Requirements
+
+### Minimum Requirements
+- **Node.js**: >= 18.0.0
+- **npm**: >= 8.0.0
+- **Memory**: 512MB minimum (1GB+ recommended for large documents)
+
+### Operating System Compatibility
+
+#### macOS
+- **Minimum**: macOS 11 (Big Sur) or later
+- **Why**: Bundled Chromium requires macOS 11+
+- **Older Macs**: For macOS 10.x, install Google Chrome manually and the tool will automatically use it
+
+#### Windows
+- **Minimum**: Windows 10 (version 1809) or later
+- **Why**: Bundled Chromium requires Windows 10 1809+
+- **Older Windows**: Install Google Chrome manually for compatibility
+
+#### Linux
+- **Most distributions supported** (Ubuntu 18.04+, Debian 10+, Fedora 32+, etc.)
+- Required system packages may vary by distribution
+- See [Puppeteer system requirements](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md) for details
+
+### Browser Requirements
+
+This tool uses Puppeteer which automatically downloads Chromium. However, if the bundled Chromium is incompatible with your system:
+
+1. **Install Google Chrome** (recommended): The tool will automatically detect and use it
+2. **Set custom Chrome path**:
+   ```bash
+   export PUPPETEER_EXECUTABLE_PATH="/path/to/chrome"
+   ```
+
+## 🔧 Troubleshooting
+
+### "dyld: cannot load 'Google Chrome for Testing'" (macOS)
+
+**Problem**: This error occurs on macOS 10.x (Catalina and older) because the bundled Chromium requires macOS 11+.
+
+**Solution**:
+1. Install [Google Chrome](https://www.google.com/chrome/) from the official website
+2. The tool will automatically detect and use your system Chrome installation
+3. Alternatively, set the Chrome path manually:
+   ```bash
+   export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+   md-preview-pdf document.md
+   ```
+
+### "Failed to launch the browser process" (Windows)
+
+**Problem**: Bundled Chromium incompatible with older Windows versions.
+
+**Solution**:
+1. Install [Google Chrome](https://www.google.com/chrome/)
+2. Or set Chrome path:
+   ```bash
+   set PUPPETEER_EXECUTABLE_PATH="C:\Program Files\Google\Chrome\Application\chrome.exe"
+   md-preview-pdf document.md
+   ```
+
+### Out of Memory Errors
+
+**Problem**: Large documents exhaust available memory.
+
+**Solution**:
+1. Increase Node.js memory limit:
+   ```bash
+   export NODE_OPTIONS="--max-old-space-size=4096"
+   md-preview-pdf large-document.md
+   ```
+2. Split large documents into smaller files
+3. Disable resource-intensive features:
+   ```bash
+   md-preview-pdf document.md --no-highlight --no-math
+   ```
+
+### Slow Performance
+
+**Tips**:
+- First conversion is slower (Chromium downloads)
+- Use `--no-mermaid` if you don't have diagrams
+- Disable unused features (`--no-math`, `--no-emoji`, `--no-highlight`)
+- Consider SSD for faster file I/O
+
+### Getting Help
+
+1. Check [Puppeteer troubleshooting](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md)
+2. Search [existing issues](https://github.com/anuragkr29/md-preview-pdf/issues)
+3. Create a [new issue](https://github.com/anuragkr29/md-preview-pdf/issues/new) with:
+   - Operating system and version
+   - Node.js version (`node --version`)
+   - Full error message
+   - Command that failed
+
 
 ## 🧪 Testing
 

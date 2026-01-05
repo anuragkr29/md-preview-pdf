@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-01-05
+
+### 🔧 Fixed
+
+#### System Chrome Fallback for Older OS Versions
+- **Issue**: Bundled Chromium failed on macOS 10.x (Catalina and older) with error: `dyld: cannot load 'Google Chrome for Testing' (load command 0x80000034 is unknown)`
+- **Root Cause**: Chrome for Testing binaries require macOS 11+ / Windows 10 1809+. Older systems are incompatible.
+- **Solution**: Implemented automatic fallback to system-installed Chrome when bundled Chromium fails
+  - Automatically detects Chrome installation at common paths
+  - Supports environment variable `PUPPETEER_EXECUTABLE_PATH` for custom Chrome location
+  - Falls back gracefully with clear error messages if no Chrome found
+  - Works on macOS, Windows, and Linux
+
+#### Compatibility Improvements
+- Added `findSystemChrome()` function that checks:
+  - Environment variable `PUPPETEER_EXECUTABLE_PATH`
+  - Common Chrome installation paths (macOS, Windows, Linux)
+  - System PATH using `which` (Unix) or `where` (Windows) commands
+- Enhanced browser launch with try-catch fallback mechanism
+- Improved error messages with actionable troubleshooting steps
+
+### 📚 Documentation
+
+#### System Requirements (README.md)
+- **macOS**: Minimum macOS 11 (Big Sur). For macOS 10.x, install Google Chrome manually.
+- **Windows**: Minimum Windows 10 (version 1809). Older versions need manual Chrome installation.
+- **Linux**: Ubuntu 18.04+, Debian 10+, Fedora 32+, and most modern distributions.
+- Added memory requirements: 512MB minimum, 1GB+ recommended.
+
+#### Troubleshooting Guide (README.md)
+New comprehensive troubleshooting section covering:
+- "dyld: cannot load" error on macOS (Chrome installation solution)
+- "Failed to launch browser" on Windows (Chrome path configuration)
+- Missing dependencies on Linux (package installation commands)
+- Out of memory errors (Node.js memory limits)
+- Slow performance tips (feature toggles)
+- How to get help (issue reporting guidelines)
+
+#### Why This Happens
+- **Chromium Compatibility**: Puppeteer downloads Chrome for Testing which has minimum OS requirements
+- **macOS 10.x limitation**: Apple's dyld (dynamic linker) in macOS 10.x doesn't support load command 0x80000034 used by modern Chrome builds
+- **Windows limitation**: Modern Chrome requires Windows 10 1809+ for certain APIs
+- **Solution**: System-installed Chrome has broader OS compatibility and is updated independently
+
+### ✅ Testing
+- ✅ Verified on macOS 11+: Bundled Chromium works
+- ✅ Verified fallback on older systems: System Chrome detected and used
+- ✅ Tested environment variable override
+- ✅ Tested error handling when no Chrome available
+
+### 🎯 Supported Systems
+
+| OS | Minimum Version | Notes |
+|----|----------------|-------|
+| macOS | 11 (Big Sur) | Older versions: install Chrome manually |
+| Windows | 10 (1809) | Older versions: install Chrome manually |
+| Linux | Ubuntu 18.04+, Debian 10+ | Most modern distributions supported |
+
+### 🔗 Related Links
+- [Puppeteer System Requirements](https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md)
+- [Chrome for Testing](https://developer.chrome.com/blog/chrome-for-testing/)
+- [Google Chrome Download](https://www.google.com/chrome/)
+
+---
+
 ## [1.0.5] - 2026-01-05
 
 ### 🎉 First Official Release with read me updated

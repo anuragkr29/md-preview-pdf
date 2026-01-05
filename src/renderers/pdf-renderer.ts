@@ -7,13 +7,71 @@ import puppeteer, { Browser, Page, PDFOptions as PuppeteerPDFOptions } from 'pup
 import { PDFOptions, MermaidOptions, ErrorCode } from '../types';
 import { logger, createError, withRetry } from '../utils';
 import { renderMermaidInBrowser, closeBrowser as closeMermaidBrowser } from './mermaid-renderer';
+import { execSync } from 'child_process';
+import * as fs from 'fs';
 
 /**
- * Launch a new browser instance
+ * Find system Chrome installation
+ */
+function findSystemChrome(): string | null {
+  const possiblePaths = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // macOS
+    '/Applications/Chromium.app/Contents/MacOS/Chromium', // macOS Chromium
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Windows
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe', // Windows 32-bit
+    '/usr/bin/google-chrome', // Linux
+    '/usr/bin/chromium-browser', // Linux Chromium
+    '/usr/bin/chromium', // Linux Chromium alt
+    '/snap/bin/chromium', // Linux Snap
+  ];
+
+  // Check environment variable first
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    if (fs.existsSync(process.env.PUPPETEER_EXECUTABLE_PATH)) {
+      return process.env.PUPPETEER_EXECUTABLE_PATH;
+    }
+  }
+
+  // Check common paths
+  for (const chromePath of possiblePaths) {
+    if (fs.existsSync(chromePath)) {
+      return chromePath;
+    }
+  }
+
+  // Try to find Chrome using which/where command
+  try {
+    if (process.platform === 'darwin' || process.platform === 'linux') {
+      const result = execSync('which google-chrome || which chromium || which chromium-browser', {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      }).trim();
+      if (result && fs.existsSync(result)) {
+        return result;
+      }
+    } else if (process.platform === 'win32') {
+      const result = execSync('where chrome', {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'ignore'],
+      }).trim().split('\n')[0];
+      if (result && fs.existsSync(result)) {
+        return result;
+      }
+    }
+  } catch {
+    // Ignore errors from which/where commands
+  }
+
+  return null;
+}
+
+/**
+ * Launch a new browser instance with fallback to system Chrome
  */
 async function launchBrowser(headless = true): Promise<Browser> {
   logger.debug('Launching browser for PDF rendering');
-  const browser = await puppeteer.launch({
+  
+  const launchOptions = {
     headless: headless,
     args: [
       '--no-sandbox',
@@ -24,9 +82,41 @@ async function launchBrowser(headless = true): Promise<Browser> {
       '--font-render-hinting=none',
     ],
     protocolTimeout: 120000,
-  });
-  
-  return browser;
+  };
+
+  try {
+    // Try to launch with bundled Chromium first
+    const browser = await puppeteer.launch(launchOptions);
+    logger.debug('Launched bundled Chromium successfully');
+    return browser;
+  } catch (error) {
+    // If bundled Chrome fails, try system Chrome
+    logger.warn('Failed to launch bundled Chromium, trying system Chrome...');
+    logger.debug(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    
+    const systemChrome = findSystemChrome();
+    
+    if (systemChrome) {
+      logger.info(`Found system Chrome at: ${systemChrome}`);
+      try {
+        const browser = await puppeteer.launch({
+          ...launchOptions,
+          executablePath: systemChrome,
+        });
+        logger.info('Launched system Chrome successfully');
+        return browser;
+      } catch (systemError) {
+        logger.error(`Failed to launch system Chrome: ${systemError instanceof Error ? systemError.message : 'Unknown error'}`);
+        throw systemError;
+      }
+    } else {
+      logger.error('No system Chrome installation found');
+      throw new Error(
+        'Failed to launch browser. Please install Google Chrome or set PUPPETEER_EXECUTABLE_PATH environment variable. ' +
+        'See troubleshooting: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md'
+      );
+    }
+  }
 }
 
 /**
