@@ -41,7 +41,7 @@ npm run build
 npm link
 ```
 
-### From NPM (Coming Soon)
+### From NPM
 
 ```bash
 # Global installation
