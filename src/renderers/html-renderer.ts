@@ -97,7 +97,19 @@ function getKatexCSS(): string {
 /**
  * Get base CSS for document structure
  */
-function getBaseCSS(): string {
+function getBaseCSS(margin?: { top?: string; right?: string; bottom?: string; left?: string }): string {
+  // Build CSS @page margin rule from margin options
+  let pageMarginCSS = 'margin: 0;';
+  if (margin) {
+    if (margin.top || margin.right || margin.bottom || margin.left) {
+      const top = margin.top || '0';
+      const right = margin.right || '0';
+      const bottom = margin.bottom || '0';
+      const left = margin.left || '0';
+      pageMarginCSS = `margin: ${top} ${right} ${bottom} ${left};`;
+    }
+  }
+
   return `
 /* Base Document Styles */
 * {
@@ -105,7 +117,7 @@ function getBaseCSS(): string {
 }
 
 @page {
-  margin: 0;
+  ${pageMarginCSS}
   size: A4;
 }
 
@@ -114,23 +126,52 @@ html {
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
   margin: 0;
-  padding: 20mm 15mm;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
   width: 100%;
-  height: 100%;
 }
 
-/* Mermaid container styles */
+/* Main content wrapper - NO padding, let Puppeteer margins handle it */
+main, .content {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+/* Markdown body - NO padding, let Puppeteer margins handle spacing */
+.markdown-body {
+  padding: 0;
+  margin: 0;
+  display: block;
+  word-wrap: break-word;
+}
+
+/* Page break handling */
+.markdown-body > * {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Keep code blocks with their content */
+pre, code, blockquote {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+  
+/* Keep headings with their content */
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid;
+  break-after: avoid;
+}
 .mermaid-container {
   display: flex;
   justify-content: center;
@@ -313,24 +354,6 @@ details[open] summary {
     margin-top: 0.6em;
     margin-bottom: 0.25em;
   }
-  
-  .markdown-body h3,
-  .markdown-body h4,
-  .markdown-body h5,
-  .markdown-body h6 {
-    margin-top: 0.4em;
-    margin-bottom: 0.15em;
-  }
-  
-  /* Keep sections together */
-  section {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-  
-  /* Tables shouldn't break */
-  table {
-    page-break-inside: avoid;
     break-inside: avoid;
   }
 }
@@ -378,7 +401,7 @@ export async function generateHtml(
   <title>${title}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <style>
-${getBaseCSS()}
+${getBaseCSS(options.pdf?.margin)}
 ${themeCSS}
 ${highlightCSS}
 ${getKatexCSS()}

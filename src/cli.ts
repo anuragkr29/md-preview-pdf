@@ -15,7 +15,7 @@ import { ConverterOptions, PDFOptions, ThemeOptions, MermaidOptions } from './ty
 import { setLogLevel, formatFileSize } from './utils';
 import { getAvailableThemes } from './themes';
 
-const packageJson = require('../package.json');
+import packageJson from '../package.json';
 
 // Create CLI program
 const program = new Command();
@@ -133,7 +133,11 @@ program
 
 // Parse margin string to object
 function parseMargin(margin: string): PDFOptions['margin'] {
-  const parts = margin.split(',').map(s => s.trim());
+  // Support both comma-separated and space-separated formats
+  // Comma format: "10mm,15mm,20mm,15mm"
+  // Space format: "10mm 15mm 20mm 15mm" (standard CSS format)
+  const separator = margin.includes(',') ? ',' : ' ';
+  const parts = margin.split(separator).map(s => s.trim()).filter(s => s.length > 0);
   
   if (parts.length === 1) {
     return {

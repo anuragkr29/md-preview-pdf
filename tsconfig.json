@@ -13,8 +13,16 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "include": ["src/**/*", "src/types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "tests"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    },
+    "transpileOnly": false,
+    "files": true
+  }
 }

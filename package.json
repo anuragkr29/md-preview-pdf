@@ -1,6 +1,6 @@
 {
   "name": "md-preview-pdf",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "State-of-the-art Markdown to PDF converter with Mermaid diagrams, syntax highlighting, math equations, and more",
   "main": "dist/index.js",
   "bin": {
@@ -66,6 +66,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "overrides": {
+    "test-exclude": "^7.0.1"
   },
   "repository": {
     "type": "git",

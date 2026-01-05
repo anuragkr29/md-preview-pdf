@@ -41,20 +41,27 @@ export async function closeBrowser(): Promise<void> {
  * Convert options to Puppeteer PDF options
  */
 function convertPDFOptions(options: PDFOptions = {}): PuppeteerPDFOptions {
+  // Use BOTH Puppeteer margins AND CSS @page margins for maximum compatibility
+  // CSS margins are injected into HTML, Puppeteer margins ensure they're applied
+  
   const pdfOptions: PuppeteerPDFOptions = {
     format: options.format || 'A4',
     printBackground: options.printBackground !== false,
-    margin: {
-      top: '0mm',
-      right: '0mm',
-      bottom: '0mm',
-      left: '0mm',
-    },
+    preferCSSPageSize: false,
     displayHeaderFooter: options.displayHeaderFooter || false,
     landscape: options.landscape || false,
     scale: options.scale || 1,
-    preferCSSPageSize: true,
   };
+
+  // Apply Puppeteer margins if provided (works alongside CSS margins)
+  if (options.margin) {
+    pdfOptions.margin = {
+      top: options.margin.top || '0mm',
+      right: options.margin.right || '0mm',
+      bottom: options.margin.bottom || '0mm',
+      left: options.margin.left || '0mm',
+    };
+  }
 
   if (options.headerTemplate) {
     pdfOptions.headerTemplate = options.headerTemplate;
@@ -72,11 +79,7 @@ function convertPDFOptions(options: PDFOptions = {}): PuppeteerPDFOptions {
       pdfOptions.headerTemplate = '<div></div>';
     }
     if (!pdfOptions.footerTemplate) {
-      pdfOptions.footerTemplate = `
-        <div style="font-size: 10px; color: #666; width: 100%; text-align: center; padding: 5px 0;">
-          <span class="pageNumber"></span> / <span class="totalPages"></span>
-        </div>
-      `;
+      pdfOptions.footerTemplate = '<div></div>';
     }
   }
 
