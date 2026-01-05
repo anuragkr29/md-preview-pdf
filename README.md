@@ -4,7 +4,9 @@ A state-of-the-art Markdown to PDF converter that preserves the exact visual app
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue)](https://www.typescriptlang.org/)
+[![ESLint](https://img.shields.io/badge/ESLint-9.0-brightgreen)](https://eslint.org/)
+![Tests](https://img.shields.io/badge/Tests-26%20passing-brightgreen)
 
 ## ✨ Features
 

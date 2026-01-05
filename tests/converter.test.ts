@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { Converter, createConverter, convert } from '../src/converter';
+import { Converter, createConverter } from '../src/converter';
 import { parseMarkdown, parseFrontMatter } from '../src/parser';
 
 const SAMPLES_DIR = path.join(__dirname, 'samples');

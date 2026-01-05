@@ -11,8 +11,8 @@ import * as fs from 'fs';
 import chalk from 'chalk';
 import ora from 'ora';
 import { Converter } from './converter';
-import { ConverterOptions, PDFOptions, ThemeOptions } from './types';
-import { setLogLevel, logger, formatFileSize } from './utils';
+import { ConverterOptions, PDFOptions, ThemeOptions, MermaidOptions } from './types';
+import { setLogLevel, formatFileSize } from './utils';
 import { getAvailableThemes } from './themes';
 
 const packageJson = require('../package.json');
@@ -48,7 +48,7 @@ program
   .option('--debug', 'Run in debug mode (show browser)')
   .option('-v, --verbose', 'Verbose output')
   .option('-q, --quiet', 'Quiet mode (minimal output)')
-  .action(async (input: string, output: string | undefined, opts: any) => {
+  .action(async (input: string, output: string | undefined, opts: Record<string, unknown>) => {
     // Set log level
     if (opts.quiet) {
       setLogLevel('error');
@@ -166,46 +166,46 @@ function parseMargin(margin: string): PDFOptions['margin'] {
 }
 
 // Parse CLI options to ConverterOptions
-function parseOptions(opts: any): ConverterOptions {
+function parseOptions(opts: Record<string, unknown>): ConverterOptions {
   const options: ConverterOptions = {
     theme: {
       name: opts.theme as ThemeOptions['name'],
     },
     pdf: {
       format: opts.format as PDFOptions['format'],
-      landscape: opts.landscape || false,
+      landscape: (opts.landscape as boolean) || false,
       printBackground: opts.background !== false,
     },
     mermaid: {
-      theme: opts.mermaidTheme,
+      theme: opts.mermaidTheme as MermaidOptions['theme'],
     },
-    toc: opts.toc || false,
-    tocDepth: parseInt(opts.tocDepth, 10),
-    outputHtml: opts.html || false,
+    toc: (opts.toc as boolean) || false,
+    tocDepth: parseInt(opts.tocDepth as string, 10),
+    outputHtml: (opts.html as boolean) || false,
     math: opts.math !== false,
     emoji: opts.emoji !== false,
     highlight: opts.highlight !== false,
-    debug: opts.debug || false,
+    debug: (opts.debug as boolean) || false,
   };
 
   // Parse margins
   if (opts.margin) {
-    options.pdf!.margin = parseMargin(opts.margin);
+    options.pdf!.margin = parseMargin(opts.margin as string);
   }
 
   // Custom CSS
   if (opts.css) {
-    options.theme!.customCSSPath = opts.css;
+    options.theme!.customCSSPath = opts.css as string;
   }
 
   // Headers and footers
   if (opts.header) {
-    options.pdf!.headerTemplate = opts.header;
+    options.pdf!.headerTemplate = opts.header as string;
     options.pdf!.displayHeaderFooter = true;
   }
 
   if (opts.footer) {
-    options.pdf!.footerTemplate = opts.footer;
+    options.pdf!.footerTemplate = opts.footer as string;
     options.pdf!.displayHeaderFooter = true;
   }
 

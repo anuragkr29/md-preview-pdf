@@ -4,6 +4,7 @@
  */
 
 import MarkdownIt, { Token } from 'markdown-it';
+import Renderer from 'markdown-it/lib/renderer';
 import StateInline from 'markdown-it/lib/rules_inline/state_inline';
 import StateBlock from 'markdown-it/lib/rules_block/state_block';
 import highlightjs from 'highlight.js';
@@ -95,7 +96,7 @@ function mathPlugin(md: MarkdownIt): void {
   });
 
   // Render math tokens
-  md.renderer.rules.math_inline = (tokens, idx) => {
+  md.renderer.rules.math_inline = ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
     try {
       return katex.renderToString(tokens[idx].content, {
         throwOnError: false,
@@ -105,9 +106,9 @@ function mathPlugin(md: MarkdownIt): void {
       logger.warn(`KaTeX inline error: ${error}`);
       return `<code class="math-error">${tokens[idx].content}</code>`;
     }
-  };
+  }) as Renderer.RenderRule;
 
-  md.renderer.rules.math_block = (tokens, idx) => {
+  md.renderer.rules.math_block = ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
     try {
       return `<div class="math-block">${katex.renderToString(tokens[idx].content, {
         throwOnError: false,
@@ -117,7 +118,7 @@ function mathPlugin(md: MarkdownIt): void {
       logger.warn(`KaTeX block error: ${error}`);
       return `<pre class="math-error"><code>${tokens[idx].content}</code></pre>`;
     }
-  };
+  }) as Renderer.RenderRule;
 }
 
 /**
@@ -125,13 +126,14 @@ function mathPlugin(md: MarkdownIt): void {
  * Converts ```mermaid blocks to special div elements for later processing
  */
 function mermaidPlugin(md: MarkdownIt): void {
-  const defaultFence = md.renderer.rules.fence || ((tokens, idx, options, env, self) => {
-    return self.renderToken(tokens, idx, options);
+  const defaultFence = md.renderer.rules.fence || ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
+    const token = tokens[idx];
+    return `<pre><code class="language-${token.info}">${token.content}</code></pre>`;
   });
 
-  md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+  md.renderer.rules.fence = ((tokens: Token[], idx: number, _options: MarkdownIt.Options, _env: Record<string, unknown>, _self: Renderer): string => {
     const token = tokens[idx];
-    const info = token.info.trim().toLowerCase();
+    const info = token.info?.trim().toLowerCase() || '';
 
     if (info === 'mermaid') {
       const content = token.content.trim();
@@ -140,8 +142,8 @@ function mermaidPlugin(md: MarkdownIt): void {
       return `<div class="mermaid" data-mermaid="${encodedContent}">${content}</div>\n`;
     }
 
-    return defaultFence(tokens, idx, options, env, self);
-  };
+    return defaultFence(tokens, idx, _options, _env, _self);
+  }) as Renderer.RenderRule;
 }
 
 /**
@@ -181,28 +183,28 @@ function addContainers(md: MarkdownIt): void {
   containerTypes.forEach((type) => {
     md.use(container, type, {
       validate: (params: string) => params.trim().split(' ')[0] === type,
-      render: (tokens: Token[], idx: number) => {
+      render: ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
         if (tokens[idx].nesting === 1) {
-          const info = tokens[idx].info.trim();
+          const info = tokens[idx].info?.trim() || '';
           const title = info.slice(type.length).trim() || type.charAt(0).toUpperCase() + type.slice(1);
           return `<div class="custom-container ${type}">\n<p class="custom-container-title">${title}</p>\n`;
         }
         return '</div>\n';
-      },
+      }) as Renderer.RenderRule,
     });
   });
 
   // Details/summary container
   md.use(container, 'details', {
     validate: (params: string) => params.trim().startsWith('details'),
-    render: (tokens: Token[], idx: number) => {
+    render: ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
       if (tokens[idx].nesting === 1) {
-        const info = tokens[idx].info.trim();
+        const info = tokens[idx].info?.trim() || '';
         const summary = info.slice(7).trim() || 'Details';
         return `<details>\n<summary>${summary}</summary>\n`;
       }
       return '</details>\n';
-    },
+    }) as Renderer.RenderRule,
   });
 }
 
