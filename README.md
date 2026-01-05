@@ -172,10 +172,10 @@ The following PDFs demonstrate the output quality across all themes:
 
 | Theme | Simple Test | File Size |
 |-------|-------------|-----------|
-| [GitHub Light](tests/output/simple-github.pdf) | [View](tests/output/simple-github.pdf) | 130 KB |
-| [GitHub Dark](tests/output/simple-github-dark.pdf) | [View](tests/output/simple-github-dark.pdf) | 130 KB |
-| [VS Code Light](tests/output/simple-vscode-light.pdf) | [View](tests/output/simple-vscode-light.pdf) | 134 KB |
-| [VS Code Dark](tests/output/simple-vscode-dark.pdf) | [View](tests/output/simple-vscode-dark.pdf) | 134 KB |
+| [GitHub Light](tests/output/examples/simple-github.pdf) | [View](tests/output/examples/simple-github.pdf) | 130 KB |
+| [GitHub Dark](tests/output/examples/simple-github-dark.pdf) | [View](tests/output/examples/simple-github-dark.pdf) | 130 KB |
+| [VS Code Light](tests/output/examples/simple-vscode-light.pdf) | [View](tests/output/examples/simple-vscode-light.pdf) | 134 KB |
+| [VS Code Dark](tests/output/examples/simple-vscode-dark.pdf) | [View](tests/output/examples/simple-vscode-dark.pdf) | 134 KB |
 
 ## 📊 Supported Mermaid Diagrams
 

@@ -34,3 +34,4 @@ temp/
 tests/output/
 *.pdf
 !tests/samples/*.pdf
+!tests/examples/*.pdf
