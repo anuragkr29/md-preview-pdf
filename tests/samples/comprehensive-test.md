@@ -2,7 +2,7 @@
 title: "MD Preview PDF Comprehensive Test Document"
 author: "Test Suite"
 date: "2024-12-31"
-pdf:
+pdfs:
   format: A4
   margin:
     top: "25mm"

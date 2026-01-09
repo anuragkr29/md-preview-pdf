@@ -27,6 +27,7 @@ function mathPlugin(md: MarkdownIt): void {
   const inlineMathRule = (state: StateInline, silent: boolean): boolean => {
     if (state.src[state.pos] !== '$') return false;
     if (state.src[state.pos + 1] === '$') return false; // Skip block math
+    if (state.src[state.pos + 1] === '{') return false; // Skip ${...} template literals
 
     const start = state.pos + 1;
     let end = start;
@@ -267,6 +268,8 @@ export function createMarkdownParser(options: ConverterOptions = {}): MarkdownIt
   // Custom attributes
   md.use(attrsPlugin, {
     allowedAttributes: ['id', 'class', 'style', 'width', 'height'],
+    leftDelimiter: '{:',
+    rightDelimiter: '}',
   });
 
   // Math support (KaTeX)

@@ -100,7 +100,7 @@ function getKatexCSS(): string {
 function getBaseCSS(margin?: { top?: string; right?: string; bottom?: string; left?: string }): string {
   // Use CSS padding on markdown-body instead of @page margins
   // This allows background colors to extend to page edges
-  const defaultMargin = '15mm';
+  const defaultMargin = '5mm';
   const top = margin?.top || defaultMargin;
   const right = margin?.right || defaultMargin;
   const bottom = margin?.bottom || defaultMargin;
@@ -115,7 +115,7 @@ function getBaseCSS(margin?: { top?: string; right?: string; bottom?: string; le
 }
 
 @page {
-  margin: 0;
+  ${paddingCSS}
   size: A4;
 }
 
@@ -177,6 +177,8 @@ pre, code, blockquote {
 h1, h2, h3, h4, h5, h6 {
   page-break-after: avoid;
   break-after: avoid;
+  orphans: 3;
+  widows: 3;
 }
 .mermaid-container {
   display: flex;
@@ -271,6 +273,23 @@ h1, h2, h3, h4, h5, h6 {
   margin-right: 0.5em;
 }
 
+/* Front matter table wrapper - negative margin to counteract padding */
+.frontmatter-wrapper {
+  margin: 0 0 12px 0;
+}
+
+/* Front matter table styling */
+.frontmatter-table {
+  margin: 0 !important;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.frontmatter-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
 /* Footnotes */
 .footnotes {
   border-top: 1px solid #e1e4e8;
@@ -287,9 +306,9 @@ h1, h2, h3, h4, h5, h6 {
 /* Table of contents */
 .table-of-contents {
   background: #f6f8fa;
-  padding: 1em 1.5em;
+  padding: 0.75em 1em;
   border-radius: 6px;
-  margin: 1em 0;
+  margin: 0.5em 0;
 }
 
 .table-of-contents ul {
@@ -298,7 +317,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .table-of-contents li {
-  margin: 0.5em 0;
+  margin: 0.35em 0;
 }
 
 /* Details/Summary */
