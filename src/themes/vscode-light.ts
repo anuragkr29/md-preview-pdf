@@ -3,17 +3,21 @@
  * Replicates the VS Code markdown preview light styling
  */
 
+import { vscodeLightColorPalette } from './colors/vscode-light-colors';
+
 export const vscodeLightTheme = `
+${vscodeLightColorPalette}
+
 /* VS Code Light Markdown CSS */
 html,
 body {
-  background-color: #ffffff;
+  background-color: var(--color-bg-primary);
 }
 
 .markdown-body {
   margin: 0;
   padding: 1.5em 1em;
-  color: #333333;
+  color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -39,18 +43,18 @@ body {
   margin-bottom: 0.5em;
   font-weight: 600;
   line-height: 1.25;
-  color: #333333;
+  color: var(--color-text-primary);
 }
 
 .markdown-body h1 {
   font-size: 2em;
-  border-bottom: 1px solid #e1e4e8;
+  border-bottom: 1px solid var(--color-border-primary);
   padding-bottom: 0.3em;
 }
 
 .markdown-body h2 {
   font-size: 1.5em;
-  border-bottom: 1px solid #e1e4e8;
+  border-bottom: 1px solid var(--color-border-primary);
   padding-bottom: 0.3em;
 }
 
@@ -68,7 +72,7 @@ body {
 
 .markdown-body h6 {
   font-size: 0.85em;
-  color: #6a737d;
+  color: var(--h6-color);
 }
 
 /* Paragraphs and text */
@@ -87,7 +91,7 @@ body {
 
 /* Links */
 .markdown-body a {
-  color: #4078c0;
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -111,9 +115,9 @@ body {
 .markdown-body blockquote {
   margin: 0 0 1em 0;
   padding: 0.5em 1em;
-  color: #6a737d;
-  background-color: #f8f8f8;
-  border-left: 4px solid #dfe2e5;
+  color: var(--blockquote-color);
+  background-color: var(--blockquote-bg);
+  border-left: 4px solid var(--blockquote-border);
 }
 
 .markdown-body blockquote > :first-child {
@@ -141,7 +145,7 @@ body {
   overflow: auto;
   font-size: 90%;
   line-height: 1.45;
-  background-color: #f8f8f8;
+  background-color: var(--pre-bg);
   border-radius: 3px;
   word-wrap: normal;
 }
@@ -169,22 +173,22 @@ body {
 
 .markdown-body table th {
   font-weight: 600;
-  background-color: #f8f8f8;
+  background-color: var(--table-header-bg);
 }
 
 .markdown-body table th,
 .markdown-body table td {
   padding: 6px 13px;
-  border: 1px solid #dfe2e5;
+  border: 1px solid var(--table-border);
 }
 
 .markdown-body table tr {
-  background-color: #ffffff;
-  border-top: 1px solid #dfe2e5;
+  background-color: var(--details-bg);
+  border-top: 1px solid var(--table-border);
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background-color: #f8f8f8;
+  background-color: var(--blockquote-bg);
 }
 
 /* Images */
@@ -199,7 +203,7 @@ body {
   height: 2px;
   padding: 0;
   margin: 1.5em 0;
-  background-color: #e1e4e8;
+  background-color: var(--color-border-primary);
   border: 0;
 }
 
@@ -219,39 +223,61 @@ body {
   padding: 3px 5px;
   font-size: 11px;
   line-height: 10px;
-  color: #444d56;
+  color: var(--kbd-color);
   vertical-align: middle;
-  background-color: #fafbfc;
-  border: 1px solid #d1d5da;
+  background-color: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
   border-radius: 3px;
-  box-shadow: inset 0 -1px 0 #d1d5da;
+  box-shadow: var(--kbd-shadow);
 }
 
 /* Custom containers - VS Code Light */
 .custom-container.tip {
-  background: #f0fff4;
-  border-color: #48bb78;
+  background: var(--container-tip-bg);
+  border-color: var(--container-tip-border);
 }
 
 .custom-container.warning {
-  background: #fffaf0;
-  border-color: #ed8936;
+  background: var(--container-warning-bg);
+  border-color: var(--container-warning-border);
 }
 
 .custom-container.danger {
-  background: #fff5f5;
-  border-color: #f56565;
+  background: var(--container-danger-bg);
+  border-color: var(--container-danger-border);
 }
 
 .custom-container.info {
-  background: #ebf8ff;
-  border-color: #4299e1;
+  background: var(--container-info-bg);
+  border-color: var(--container-info-border);
 }
 
 .custom-container.note {
-  background: #faf5ff;
-  border-color: #9f7aea;
+  background: var(--container-note-bg);
+  border-color: var(--container-note-border);
+}
+
+/* Error message styling */
+.mermaid-error {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
+}
+
+.mermaid-error .error-message {
+  color: var(--color-warning-text);
+}
+
+/* Table of contents styling */
+.table-of-contents {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.table-of-contents a {
+  color: var(--color-link);
 }
 `;
 
 export default vscodeLightTheme;
+

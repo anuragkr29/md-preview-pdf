@@ -42,7 +42,7 @@
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-task-lists": "^2.1.1",
     "markdown-it-toc-done-right": "^4.2.0",
-    "mermaid": "^10.6.1",
+    "mermaid": "^10.9.5",
     "ora": "^5.4.1",
     "puppeteer": "^24.34.0"
   },

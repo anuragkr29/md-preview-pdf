@@ -3,17 +3,21 @@
  * Replicates the VS Code markdown preview dark styling
  */
 
+import { vscodeDarkColorPalette } from './colors/vscode-dark-colors';
+
 export const vscodeDarkTheme = `
+${vscodeDarkColorPalette}
+
 /* VS Code Dark Markdown CSS */
 html,
 body {
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-primary);
 }
 
 .markdown-body {
   margin: 0;
   padding: 1.5em 1em;
-  color: #d4d4d4;
+  color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -39,18 +43,18 @@ body {
   margin-bottom: 0.5em;
   font-weight: 600;
   line-height: 1.25;
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 .markdown-body h1 {
   font-size: 2em;
-  border-bottom: 1px solid #3c3c3c;
+  border-bottom: 1px solid var(--color-border-primary);
   padding-bottom: 0.3em;
 }
 
 .markdown-body h2 {
   font-size: 1.5em;
-  border-bottom: 1px solid #3c3c3c;
+  border-bottom: 1px solid var(--color-border-primary);
   padding-bottom: 0.3em;
 }
 
@@ -68,7 +72,7 @@ body {
 
 .markdown-body h6 {
   font-size: 0.85em;
-  color: #9d9d9d;
+  color: var(--h6-color);
 }
 
 /* Paragraphs and text */
@@ -79,7 +83,7 @@ body {
 
 .markdown-body strong {
   font-weight: 600;
-  color: #ffffff;
+  color: var(--strong-color);
 }
 
 .markdown-body em {
@@ -88,7 +92,7 @@ body {
 
 /* Links */
 .markdown-body a {
-  color: #3794ff;
+  color: var(--link-color);
   text-decoration: none;
 }
 
@@ -112,9 +116,9 @@ body {
 .markdown-body blockquote {
   margin: 0 0 1em 0;
   padding: 0.5em 1em;
-  color: #9d9d9d;
-  background-color: #252526;
-  border-left: 4px solid #3c3c3c;
+  color: var(--blockquote-color);
+  background-color: var(--color-bg-secondary);
+  border-left: 4px solid var(--blockquote-border);
 }
 
 .markdown-body blockquote > :first-child {
@@ -130,10 +134,10 @@ body {
   padding: 0.2em 0.4em;
   margin: 0;
   font-size: 90%;
-  background-color: #3c3c3c;
+  background-color: var(--code-bg);
   border-radius: 3px;
   font-family: "SF Mono", Monaco, Menlo, Consolas, "Ubuntu Mono", "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace;
-  color: #d7ba7d;
+  color: var(--code-color);
 }
 
 .markdown-body pre {
@@ -143,7 +147,7 @@ body {
   overflow: auto;
   font-size: 90%;
   line-height: 1.45;
-  background-color: #252526;
+  background-color: var(--color-bg-secondary);
   border-radius: 3px;
   word-wrap: normal;
 }
@@ -155,7 +159,7 @@ body {
   background: transparent;
   border: 0;
   white-space: pre;
-  color: #d4d4d4;
+  color: var(--color-text-primary);
 }
 
 /* Tables */
@@ -172,23 +176,23 @@ body {
 
 .markdown-body table th {
   font-weight: 600;
-  background-color: #252526;
-  color: #ffffff;
+  background-color: var(--color-bg-secondary);
+  color: var(--table-header-color);
 }
 
 .markdown-body table th,
 .markdown-body table td {
   padding: 6px 13px;
-  border: 1px solid #3c3c3c;
+  border: 1px solid var(--table-border);
 }
 
 .markdown-body table tr {
-  background-color: #1e1e1e;
-  border-top: 1px solid #3c3c3c;
+  background-color: var(--color-bg-primary);
+  border-top: 1px solid var(--table-border);
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background-color: #252526;
+  background-color: var(--color-bg-secondary);
 }
 
 /* Images */
@@ -203,7 +207,7 @@ body {
   height: 2px;
   padding: 0;
   margin: 1.5em 0;
-  background-color: #3c3c3c;
+  background-color: var(--hr-color);
   border: 0;
 }
 
@@ -223,87 +227,109 @@ body {
   padding: 3px 5px;
   font-size: 11px;
   line-height: 10px;
-  color: #d4d4d4;
+  color: var(--color-text-primary);
   vertical-align: middle;
-  background-color: #3c3c3c;
-  border: 1px solid #555555;
+  background-color: var(--kbd-bg);
+  border: 1px solid var(--kbd-border);
   border-radius: 3px;
-  box-shadow: inset 0 -1px 0 #555555;
+  box-shadow: inset 0 -1px 0 var(--kbd-border);
 }
 
 /* Custom containers - VS Code Dark */
 .custom-container {
-  background: #252526;
+  background: var(--color-bg-secondary);
 }
 
 .custom-container.tip {
-  background: #1a2f1f;
-  border-color: #4ec9b0;
+  background: var(--container-tip-bg);
+  border-color: var(--container-tip-border);
 }
 
 .custom-container.warning {
-  background: #2d2a16;
-  border-color: #dcdcaa;
+  background: var(--container-warning-bg);
+  border-color: var(--container-warning-border);
 }
 
 .custom-container.danger {
-  background: #2d1b1b;
-  border-color: #f14c4c;
+  background: var(--container-danger-bg);
+  border-color: var(--container-danger-border);
 }
 
 .custom-container.info {
-  background: #1b2836;
-  border-color: #3794ff;
+  background: var(--container-info-bg);
+  border-color: var(--container-info-border);
 }
 
 .custom-container.note {
-  background: #241f2d;
-  border-color: #c586c0;
+  background: var(--container-note-bg);
+  border-color: var(--container-note-border);
 }
 
 .custom-container-title {
-  color: #ffffff;
+  color: var(--container-title-text);
 }
 
 /* Table of contents - VS Code Dark */
 .table-of-contents {
-  background: #252526;
-  border: 1px solid #3c3c3c;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--toc-border);
 }
 
 .table-of-contents a {
-  color: #3794ff;
+  color: var(--link-color);
 }
 
 /* Details - VS Code Dark */
 details {
-  background: #252526;
-  border: 1px solid #3c3c3c;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--details-border);
 }
 
 details summary {
-  color: #ffffff;
+  color: var(--details-summary-color);
 }
 
 /* Footnotes - VS Code Dark */
 .footnotes {
-  border-top: 1px solid #3c3c3c;
+  border-top: 1px solid var(--footnotes-border);
 }
 
 /* Mermaid error - VS Code Dark */
 .mermaid-error {
-  background: #3d2d00;
-  border-color: #dcdcaa;
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
 }
 
 .mermaid-error .error-message {
-  color: #dcdcaa;
+  color: var(--color-warning-text);
 }
 
 /* Math error - VS Code Dark */
 .math-error {
-  color: #f14c4c;
-  background: #2d1b1b;
+  color: var(--math-error-color);
+  background: var(--math-error-bg);
+}
+
+/* Error message styling */
+.mermaid-error {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
+}
+
+.mermaid-error .error-message {
+  color: var(--color-warning-text);
+}
+
+/* Table of contents styling */
+.table-of-contents {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.table-of-contents a {
+  color: var(--color-link);
 }
 `;
 

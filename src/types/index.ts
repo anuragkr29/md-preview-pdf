@@ -48,6 +48,8 @@ export interface ThemeOptions {
 export interface MermaidOptions {
   /** Mermaid theme */
   theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'base';
+  /** Theme variables for base theme customization */
+  themeVariables?: Record<string, string>;
   /** Background color */
   backgroundColor?: string;
   /** Font family */

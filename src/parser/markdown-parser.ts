@@ -229,9 +229,7 @@ export function createMarkdownParser(options: ConverterOptions = {}): MarkdownIt
   // Anchor plugin for headers
   md.use(anchor, {
     level: [1, 2, 3, 4, 5, 6],
-    permalink: anchor.permalink.headerLink({
-      safariReaderFix: true,
-    }),
+    permalink: false,
     slugify: (s: string) =>
       s
         .toLowerCase()

@@ -96,6 +96,51 @@ export class Converter {
         highlightTheme: getMatchingHighlightTheme(themeName),
       };
     }
+    // Set Mermaid theme based on document theme if not already set
+    if (this.options.mermaid?.theme === 'default' || !this.options.mermaid?.theme) {
+      const themeName = this.options.theme?.name || 'github';
+      const mermaidTheme = this.getMermaidThemeForDocumentTheme(themeName);
+      this.options.mermaid = {
+        ...this.options.mermaid,
+        theme: mermaidTheme,
+      };
+    } else if (this.options.mermaid?.theme && !this.isValidMermaidTheme(this.options.mermaid.theme)) {
+      // Validate that user-provided theme is one of the predefined themes
+      logger.warn(
+        `Invalid Mermaid theme: "${this.options.mermaid.theme}". Using default. ` +
+        `Valid themes are: default, forest, dark, neutral, base`
+      );
+      this.options.mermaid = {
+        ...this.options.mermaid,
+        theme: 'default',
+      };
+    }
+  }
+
+  /**
+   * Map document theme to Mermaid predefined theme
+  */
+  private getMermaidThemeForDocumentTheme(documentTheme: string): 'default' | 'forest' | 'dark' | 'neutral' | 'base' {
+    switch (documentTheme) {
+      case 'github':
+        return 'default';
+      case 'github-dark':
+        return 'dark';
+      case 'vscode-light':
+        return 'default';
+      case 'vscode-dark':
+        return 'dark';
+      default:
+        return 'default';
+    }
+  }
+
+  /**
+   * Validate Mermaid theme is one of the predefined themes
+  */
+  private isValidMermaidTheme(theme: string): boolean {
+    const validThemes = ['default', 'forest', 'dark', 'neutral', 'base'];
+    return validThemes.includes(theme);
   }
 
   /**
