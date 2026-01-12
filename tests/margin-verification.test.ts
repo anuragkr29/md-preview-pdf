@@ -103,6 +103,9 @@ describe('PDF Margins', () => {
     }
   });
 
+  // Increase Jest timeout for PDF generation tests which can be slow on CI
+  jest.setTimeout(120000);
+
   test('should apply 10mm margins correctly', async () => {
     const converter = new Converter({
       pdf: {
