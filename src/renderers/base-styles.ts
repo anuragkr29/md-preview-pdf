@@ -20,7 +20,6 @@ export function getBaseCSS(margin?: MarginOptions): string {
   const left = margin?.left || defaultMargin;
   
   const paddingCSS = `padding: ${top} ${right} ${bottom} ${left} !important;`;
-  const pageMarginCSS = `margin: ${top} ${right} ${bottom} ${left};`;
 
   return `
 /* Base Document Styles */

@@ -217,9 +217,6 @@ export async function renderMermaidInBrowser(
             fontFamily: opts.fontFamily || '"Segoe UI", Arial, sans-serif',
             gantt: {
               useWidth: 1000, // Use full width available
-              rightPadding: 0,
-              leftPadding: 75,
-              topPadding: 75,
               gridLineStartPadding: 10,
             },
           });

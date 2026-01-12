@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { Converter, createConverter } from '../src/converter';
+import { Converter } from '../src/converter';
 
 const OUTPUT_DIR = path.join(__dirname, 'output');
 
