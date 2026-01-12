@@ -11,6 +11,22 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 
 /**
+ * Validate executable path to prevent malicious binary execution
+ */
+function isValidExecutablePath(execPath: string): boolean {
+  // Allowed patterns for Chrome/Chromium executables
+  const allowedPatterns = [
+    /^\/Applications\/.*\.app\/Contents\/MacOS\/(Google Chrome|Chromium)$/,  // macOS
+    /^\/usr\/bin\/(google-chrome|chromium|chromium-browser)$/,              // Linux /usr/bin
+    /^\/snap\/bin\/chromium$/,                                                // Linux Snap
+    /^\/opt\/google\/chrome\/chrome$/,                                       // Linux /opt
+    /^C:\\Program Files.*\\(Google\\Chrome|Chromium)\\Application\\chrome\.exe$/i,  // Windows
+  ];
+  
+  return allowedPatterns.some(pattern => pattern.test(execPath));
+}
+
+/**
  * Find system Chrome installation
  */
 function findSystemChrome(): string | null {
@@ -27,8 +43,16 @@ function findSystemChrome(): string | null {
 
   // Check environment variable first
   if (process.env.PUPPETEER_EXECUTABLE_PATH) {
-    if (fs.existsSync(process.env.PUPPETEER_EXECUTABLE_PATH)) {
-      return process.env.PUPPETEER_EXECUTABLE_PATH;
+    const envPath = process.env.PUPPETEER_EXECUTABLE_PATH;
+    if (fs.existsSync(envPath)) {
+      if (!isValidExecutablePath(envPath)) {
+        logger.warn(
+          `PUPPETEER_EXECUTABLE_PATH validation failed: ${envPath}. ` +
+          'Path does not match allowed Chrome/Chromium patterns.'
+        );
+      } else {
+        return envPath;
+      }
     }
   }
 

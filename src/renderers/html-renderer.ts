@@ -11,6 +11,27 @@ import { getBaseCSS } from './base-styles';
 import { getKatexCSS } from './katex-styles';
 
 /**
+ * Escape HTML entities to prevent XSS
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * Validate custom CSS path to prevent path traversal
+ */
+function isValidCSSPath(cssPath: string, basePath: string): boolean {
+  const resolvedPath = path.resolve(basePath, cssPath);
+  const resolvedBase = path.resolve(basePath);
+  return resolvedPath.startsWith(resolvedBase);
+}
+
+/**
  * Process local images and convert to base64 data URIs
  */
 async function processImages(html: string, basePath: string): Promise<string> {
@@ -66,7 +87,12 @@ export async function generateHtml(
   let customCSS = themeOptions.customCSS || '';
   if (themeOptions.customCSSPath) {
     try {
-      customCSS += await readFile(themeOptions.customCSSPath);
+      const basePath = options.basePath || process.cwd();
+      if (!isValidCSSPath(themeOptions.customCSSPath, basePath)) {
+        logger.warn(`Custom CSS path validation failed: ${themeOptions.customCSSPath}`);
+      } else {
+        customCSS += await readFile(themeOptions.customCSSPath);
+      }
     } catch (error) {
       logger.warn(`Failed to load custom CSS: ${error}`);
     }
@@ -78,8 +104,8 @@ export async function generateHtml(
     processedHtml = await processImages(processedHtml, options.basePath);
   }
 
-  // Document title
-  const title = parsed.frontMatter.title || 'Document';
+  // Document title - escape to prevent XSS
+  const title = escapeHtml(parsed.frontMatter.title || 'Document');
 
   // Build the complete HTML document
   const html = `<!DOCTYPE html>
@@ -88,7 +114,10 @@ export async function generateHtml(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" 
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+        integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+        crossorigin="anonymous">
   <style>
 ${getBaseCSS(options.pdf?.margin)}
 ${themeCSS}
