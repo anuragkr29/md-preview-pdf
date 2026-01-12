@@ -156,39 +156,46 @@ md-preview-pdf themes
 
 ### Customizing Theme Styling
 
-Each theme is defined as a CSS string in the `src/themes/` directory. Color palettes are split out into `src/themes/colors/` as separate modules (for example: `github-colors.ts`, `github-dark-colors.ts`, `vscode-light-colors.ts`, `vscode-dark-colors.ts`). To customize a theme you can either edit the theme file itself or adjust the palette module it imports.
+Themes use a modular architecture with separate color palettes and CSS styling:
 
-Tips:
-- Edit `src/themes/colors/*-colors.ts` to change shared color variables used across themes.
-- Or override CSS variables in your own custom stylesheet and pass it via `--css <path>`.
+**Structure:**
+- Color palettes: `src/themes/colors/*.ts` (defines CSS variables)
+- Theme CSS: `src/themes/*.ts` (imports colors and applies styling)
 
-To customize a theme:
+**Available Themes:**
 
-1. **GitHub Light Theme** (`src/themes/github.ts`)
-   - Background color: `#ffffff` (white)
-   - Text color: `#24292f` (dark gray)
-   - Edit the `.markdown-body` styling and color variables
+1. **GitHub Light Theme**
+   - Colors: [src/themes/colors/github-colors.ts](src/themes/colors/github-colors.ts)
+   - CSS: [src/themes/github.ts](src/themes/github.ts)
+   - Primary colors: `--bgColor-default: #ffffff`, `--fgColor-default: #1f2328`
 
-2. **GitHub Dark Theme** (`src/themes/github-dark.ts`)
-   - Background color: `#0d1117` (very dark gray)
-   - Text color: `#c9d1d9` (light gray)
-   - Edit the `.markdown-body` styling and color variables
+2. **GitHub Dark Theme**
+   - Colors: [src/themes/colors/github-dark-colors.ts](src/themes/colors/github-dark-colors.ts)
+   - CSS: [src/themes/github-dark.ts](src/themes/github-dark.ts)
+   - Primary colors: `--bgColor-default: #0d1117`, `--fgColor-default: #e6edf3`
 
-3. **VS Code Light Theme** (`src/themes/vscode-light.ts`)
-   - Background color: `#ffffff` (white)
-   - Text color: `#333333` (dark gray)
-   - Edit the `.markdown-body` styling to match VS Code light theme
+3. **VS Code Light Theme**
+   - Colors: [src/themes/colors/vscode-light-colors.ts](src/themes/colors/vscode-light-colors.ts)
+   - CSS: [src/themes/vscode-light.ts](src/themes/vscode-light.ts)
+   - Primary colors: `--bgColor-default: #ffffff`, `--fgColor-default: #333333`
 
-4. **VS Code Dark Theme** (`src/themes/vscode-dark.ts`)
-   - Background color: `#1e1e1e` (VS Code dark)
-   - Text color: `#d4d4d4` (light gray)
-   - Edit the `.markdown-body` styling to match VS Code dark theme
+4. **VS Code Dark Theme**
+   - Colors: [src/themes/colors/vscode-dark-colors.ts](src/themes/colors/vscode-dark-colors.ts)
+   - CSS: [src/themes/vscode-dark.ts](src/themes/vscode-dark.ts)
+   - Primary colors: `--bgColor-default: #1e1e1e`, `--fgColor-default: #d4d4d4`
 
-To test your theme changes:
+**To customize a theme:**
+
+1. Edit color values in the appropriate `colors/*.ts` file (uses CSS custom properties)
+2. Modify styling rules in the theme's main `.ts` file if needed
+3. Rebuild and test:
+
 ```bash
 npm run build
 md-preview-pdf tests/samples/simple-test.md output.pdf --theme github-dark
 ```
+
+This modular approach separates color definitions from styling logic, making themes easier to maintain and extend.
 
 ### Sample Output
 
