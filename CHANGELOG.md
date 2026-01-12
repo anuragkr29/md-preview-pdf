@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-11
+
+### Added
+- **Full-width Gantt chart rendering**: Gantt charts now span the entire page width
+  - Configured ganttConfig in Mermaid initialization with `useWidth` parameter
+  - Optimized padding and margins for better Gantt diagram display
+  - Enhanced CSS for `.mermaid-container.gantt` to prevent width constraints
+
+- **Official Mermaid theme rendering**: Use official Mermaid themes and validate user selection
+  - Removed custom CSS and theme overrides for Mermaid
+  - Dark-mode themes (`github-dark`, `vscode-dark`) use Mermaid's `dark` theme
+  - Light/default themes (`github`, `github-light`, `vscode-light`) use Mermaid's `default` theme
+  - Validate Mermaid theme names; allowed themes: `default`, `forest`, `dark`, `neutral`, `base`
+  - Invalid themes now log a warning and fallback to `default`
+
+- **Modular CSS rendering architecture**: Improved code organization
+  - Extracted base document CSS into separate `base-styles.ts` module
+  - Extracted KaTeX styles into separate `katex-styles.ts` module
+  - Reduced `html-renderer.ts` complexity for better maintainability
+  - Each CSS module independently testable and reusable
+
+- **Render YAML front matter as an HTML table**: Render YAML front matter as an HTML table in generated PDFs for clearer metadata presentation ([963b163](https://github.com/anuragkr29/md-preview-pdf/commit/963b163)).
+
+- **Enhanced security measures**:
+  - Added SRI (Subresource Integrity) hashes to all CDN resources for tamper detection
+  - Implemented HTML escaping for document title field to prevent XSS
+  - Changed Mermaid security level from `'loose'` to `'antiscript'` for safer diagram rendering
+  - Added validation for custom CSS paths to prevent path traversal attacks
+  - Added executable path validation for Chrome/Chromium detection
+
+### Improved
+- **Code organization**: CSS generation logic separated into focused modules
+  - Better separation of concerns
+  - Easier to locate and modify specific CSS rules
+  - Improved code reusability
+
+### Fixed
+- Rendering issues for the `github-dark` theme in generated PDFs; removed unused variables and minor cleanups ([e88e723](https://github.com/anuragkr29/md-preview-pdf/commit/e88e723)).
+
+### CI / Tests
+- Added Node 24.x to the GitHub Actions Node matrix (see `.github/workflows/ci.yml`) ([3390c1b](https://github.com/anuragkr29/md-preview-pdf/commit/3390c1b)).
+- Increased Jest timeout to 120s for PDF generation tests to reduce flaky failures (tests/margin-verification.test.ts) ([3390c1b](https://github.com/anuragkr29/md-preview-pdf/commit/3390c1b)).
+
+### Chore
+- Regenerated sample PDFs and updated documentation/changelog metadata ([eebc2d0](https://github.com/anuragkr29/md-preview-pdf/commit/eebc2d0)).
+
 ## [1.0.6] - 2026-01-05
 
 ### 🔧 Fixed

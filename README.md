@@ -22,6 +22,11 @@ A state-of-the-art Markdown to PDF converter that preserves the exact visual app
 - **Emoji Support**: Convert `:emoji:` shortcodes to unicode
 - **High-Fidelity Output**: Uses Puppeteer for pixel-perfect PDF generation
 
+### What's new in v1.1.0
+- Render YAML front matter as an HTML table in generated PDFs for clearer metadata presentation
+- Comprehensive security hardening (SRI for CDNs, improved escaping, stricter Mermaid security level)
+- Refactored CSS rendering into dedicated modules for improved maintainability
+
 ## 📦 Installation
 
 ### From Source (Development)
@@ -70,7 +75,20 @@ md-preview-pdf document.md --page-numbers
 
 # Generate table of contents
 md-preview-pdf document.md --toc
+
+# TOC with custom depth
+md-preview-pdf document.md --toc --toc-depth 2
 ```
+
+> **Note**: Table of contents generation requires a `${toc}` marker in your markdown file where you want the TOC to appear. Example:
+> ```markdown
+> # My Document
+> 
+> ${toc}
+> 
+> ## Section 1
+> Content here...
+> ```
 
 ### Programmatic Usage
 
@@ -112,7 +130,7 @@ await converter.cleanup();
 | `--no-math` | Disable KaTeX math rendering | `true` |
 | `--no-emoji` | Disable emoji conversion | `true` |
 | `--no-highlight` | Disable syntax highlighting | `true` |
-| `--mermaid-theme <theme>` | Mermaid theme (default, forest, dark, neutral) | `default` |
+| `--mermaid-theme <theme>` | Mermaid theme (default, forest, dark, neutral, base) | `default` |
 | `--header <template>` | Custom header HTML template | - |
 | `--footer <template>` | Custom footer HTML template | - |
 | `--page-numbers` | Add page numbers to footer | `false` |
@@ -138,7 +156,13 @@ md-preview-pdf themes
 
 ### Customizing Theme Styling
 
-Each theme is defined as a CSS string in the `src/themes/` directory. To customize a theme:
+Each theme is defined as a CSS string in the `src/themes/` directory. Color palettes are split out into `src/themes/colors/` as separate modules (for example: `github-colors.ts`, `github-dark-colors.ts`, `vscode-light-colors.ts`, `vscode-dark-colors.ts`). To customize a theme you can either edit the theme file itself or adjust the palette module it imports.
+
+Tips:
+- Edit `src/themes/colors/*-colors.ts` to change shared color variables used across themes.
+- Or override CSS variables in your own custom stylesheet and pass it via `--css <path>`.
+
+To customize a theme:
 
 1. **GitHub Light Theme** (`src/themes/github.ts`)
    - Background color: `#ffffff` (white)
@@ -194,10 +218,36 @@ Supported diagram types:
 - Class diagrams
 - State diagrams
 - Entity Relationship diagrams
-- Gantt charts
+- Gantt charts (full-width rendering)
 - Pie charts
 - Git graphs
 - User Journey diagrams
+
+### Mermaid Themes and Configuration
+
+The converter automatically selects the appropriate Mermaid theme based on your document theme:
+
+| Document Theme | Mermaid Theme |
+|---|---|
+| `github` | `default` |
+| `github-dark` | `dark` |
+| `vscode-light` | `default` |
+| `vscode-dark` | `dark` |
+
+You can also explicitly set the Mermaid theme via CLI:
+
+```bash
+# Use forest theme
+md-preview-pdf document.md --mermaid-theme forest
+
+# Use neutral theme
+md-preview-pdf document.md --mermaid-theme neutral
+```
+
+**Available Mermaid themes**: `default`, `forest`, `dark`, `neutral`, `base`
+
+> **Note**: Invalid theme names will trigger a warning and fallback to the `default` theme automatically.
+
 
 ## ➗ Math Equations
 
@@ -224,14 +274,15 @@ Use YAML front matter to configure document-specific options:
 title: "My Document"
 author: "John Doe"
 date: "2024-01-01"
-pdf:
+pdfs:
   format: Letter
   margin:
     top: "25mm"
     bottom: "25mm"
-theme: github-dark
 ---
 ```
+
+In v1.1.0 the YAML front matter is also rendered as an HTML table in the generated PDF, providing a clear metadata summary at the top of the document.
 
 ## 📁 Custom Containers
 
