@@ -20,6 +20,18 @@ import { ConverterOptions } from '../types';
 import { logger } from '../utils';
 
 /**
+ * Escape HTML entities to prevent XSS in rendered output
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
  * Custom plugin to render math equations with KaTeX
  */
 function mathPlugin(md: MarkdownIt): void {
@@ -129,7 +141,7 @@ function mathPlugin(md: MarkdownIt): void {
 function mermaidPlugin(md: MarkdownIt): void {
   const defaultFence = md.renderer.rules.fence || ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
     const token = tokens[idx];
-    return `<pre><code class="language-${token.info}">${token.content}</code></pre>`;
+    return `<pre><code class="language-${escapeHtml(token.info)}">${escapeHtml(token.content)}</code></pre>`;
   });
 
   md.renderer.rules.fence = ((tokens: Token[], idx: number, _options: MarkdownIt.Options, _env: Record<string, unknown>, _self: Renderer): string => {
@@ -187,7 +199,7 @@ function addContainers(md: MarkdownIt): void {
       render: ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
         if (tokens[idx].nesting === 1) {
           const info = tokens[idx].info?.trim() || '';
-          const title = info.slice(type.length).trim() || type.charAt(0).toUpperCase() + type.slice(1);
+          const title = escapeHtml(info.slice(type.length).trim() || type.charAt(0).toUpperCase() + type.slice(1));
           return `<div class="custom-container ${type}">\n<p class="custom-container-title">${title}</p>\n`;
         }
         return '</div>\n';
@@ -201,7 +213,7 @@ function addContainers(md: MarkdownIt): void {
     render: ((tokens: Token[], idx: number, _options: MarkdownIt.Options): string => {
       if (tokens[idx].nesting === 1) {
         const info = tokens[idx].info?.trim() || '';
-        const summary = info.slice(7).trim() || 'Details';
+        const summary = escapeHtml(info.slice(7).trim() || 'Details');
         return `<details>\n<summary>${summary}</summary>\n`;
       }
       return '</details>\n';
@@ -214,6 +226,9 @@ function addContainers(md: MarkdownIt): void {
  */
 export function createMarkdownParser(options: ConverterOptions = {}): MarkdownIt {
   const md = new MarkdownIt({
+    // SECURITY NOTE: html:true allows raw HTML in markdown, which is required
+    // for full GFM compatibility. When processing untrusted input, consider
+    // sanitising the output with a library like DOMPurify before rendering.
     html: true,
     xhtmlOut: true,
     breaks: true,

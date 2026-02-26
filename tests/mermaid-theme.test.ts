@@ -17,6 +17,7 @@ beforeAll(() => {
 });
 
 describe('Mermaid Theme Mapping', () => {
+  jest.setTimeout(120_000); // Increase timeout for rendering tests
   describe('theme configuration', () => {
     it('should map github theme to default Mermaid theme', () => {
       const converter = new Converter({

@@ -49,7 +49,14 @@ async function processImages(html: string, basePath: string): Promise<string> {
 
     try {
       const imagePath = path.resolve(basePath, src);
-      
+
+      // Prevent path traversal — resolved path must be within basePath
+      const resolvedBase = path.resolve(basePath);
+      if (!imagePath.startsWith(resolvedBase + path.sep) && imagePath !== resolvedBase) {
+        logger.warn(`Image path traversal blocked: ${src}`);
+        continue;
+      }
+
       if (await fileExists(imagePath)) {
         const base64 = await readFileAsBase64(imagePath);
         const mimeType = getMimeType(imagePath);

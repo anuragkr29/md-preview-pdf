@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-02-25
+
+### Security
+
+- **Dependency vulnerability fixes**: Resolved 6 npm audit vulnerabilities (1 critical, 1 high, 3 moderate, 1 low)
+  - `basic-ftp` critical path traversal (CVE in `downloadToDir()`)
+  - `minimatch` high ReDoS via repeated wildcards
+  - `markdown-it` moderate ReDoS
+  - `ajv` moderate ReDoS with `$data` option
+  - `lodash-es` moderate prototype pollution in `_.unset`/`_.omit`
+  - `diff` (jsdiff) DoS in `parsePatch`/`applyPatch`
+
+- **XSS prevention in Mermaid renderer**: Diagram content is now base64-encoded and decoded in the browser context instead of being injected raw into HTML templates
+- **JS injection prevention**: Mermaid theme and fontFamily options are now validated/sanitized before interpolation into JavaScript contexts
+- **HTML escaping in error fallbacks**: Mermaid error fallback HTML now escapes diagram content and error messages
+- **HTML escaping in markdown parser**: Custom container titles, details/summary titles, and the default fence fallback now properly escape HTML entities
+- **Image path traversal protection**: `processImages` now validates that resolved image paths stay within the document's base directory
+- **Puppeteer hardening**: Added additional Chrome launch flags (`--disable-extensions`, `--disable-background-networking`, `--disable-sync`, `--disable-translate`, `--no-first-run`, etc.) to both PDF and Mermaid browser instances
+- **Security documentation**: Added inline comment in markdown parser noting that `html: true` is required for GFM but untrusted input should be sanitised
+
 ## [1.1.0] - 2026-01-11
 
 ### Added

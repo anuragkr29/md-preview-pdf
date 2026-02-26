@@ -6,6 +6,7 @@ We release patches for security vulnerabilities. Which versions are eligible for
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.1.x   | :white_check_mark: |
 | 1.0.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
@@ -17,7 +18,7 @@ We take the security of MD Preview PDF seriously. If you believe you have found 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
 Instead, please report them via email to:
-- **Email**: anuragkr29@outlook.com
+- **Email**: anuragkr29@gmail.com
 - **Subject**: [SECURITY] MD Preview PDF - Brief Description
 
 ### What to Include
@@ -97,4 +98,4 @@ This security policy may be updated periodically. Significant changes will be an
 
 ---
 
-Last Updated: January 3, 2026
+Last Updated: February 25, 2026
