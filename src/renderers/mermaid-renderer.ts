@@ -7,6 +7,29 @@ import puppeteer, { Browser, Page } from 'puppeteer';
 import { MermaidOptions, ErrorCode } from '../types';
 import { logger, createError } from '../utils';
 
+/**
+ * Escape HTML entities to prevent XSS in error fallback templates
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * Sanitize a string for safe use in a JS single-quoted string literal.
+ * Prevents injection via crafted theme or fontFamily values.
+ */
+function sanitizeJsString(value: string): string {
+  return value.replace(/[\\'"<>/\n\r]/g, '');
+}
+
+/** Allowed Mermaid theme values */
+const VALID_MERMAID_THEMES = ['default', 'forest', 'dark', 'neutral', 'base'];
+
 let browserInstance: Browser | null = null;
 
 /**
@@ -24,6 +47,14 @@ async function getBrowser(headless = true): Promise<Browser> {
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
         '--font-render-hinting=none',
+        '--disable-extensions',
+        '--disable-background-networking',
+        '--disable-sync',
+        '--disable-translate',
+        '--hide-scrollbars',
+        '--metrics-recording-only',
+        '--mute-audio',
+        '--no-first-run',
       ],
     });
   }
@@ -52,7 +83,15 @@ export async function renderMermaidToSvg(
   const page = await browser.newPage();
 
   try {
-    // Set up Mermaid HTML
+    // Sanitize options for safe interpolation into HTML/JS contexts
+    const safeTheme = VALID_MERMAID_THEMES.includes(options.theme || '') ? options.theme! : 'default';
+    const safeFontFamily = sanitizeJsString(options.fontFamily || '"Segoe UI", Arial, sans-serif');
+    const safeBgColor = sanitizeJsString(options.backgroundColor || 'transparent');
+
+    // Base64-encode diagram content to prevent XSS when embedding in HTML
+    const encodedDiagram = Buffer.from(diagram).toString('base64');
+
+    // Set up Mermaid HTML — diagram is decoded from base64 in JS, never raw in HTML
     const html = `
 <!DOCTYPE html>
 <html>
@@ -62,22 +101,25 @@ export async function renderMermaidToSvg(
           integrity="sha384-sEfKl4yOXKrGYwqBt9xKu0PI8OqPp6LXF1Dn9pLIoP0dqKJVGkGfvHPnlnTYEJrR"
           crossorigin="anonymous"></script>
   <style>
-    body { margin: 0; padding: 0; background: ${options.backgroundColor || 'transparent'}; }
-    .mermaid { font-family: ${options.fontFamily || '"Segoe UI", Arial, sans-serif'}; }
+    body { margin: 0; padding: 0; background: ${safeBgColor}; }
+    .mermaid { font-family: ${safeFontFamily}; }
   </style>
 </head>
 <body>
-  <div id="container" class="mermaid">
-    ${diagram}
-  </div>
+  <div id="container" class="mermaid"></div>
   <script>
+    // Decode diagram from base64 to prevent XSS from raw content injection
+    var diagramText = atob('${encodedDiagram}');
+    document.getElementById('container').textContent = diagramText;
     mermaid.initialize({
-      startOnLoad: true,
-      theme: '${options.theme || 'default'}',
+      startOnLoad: false,
+      theme: '${safeTheme}',
       securityLevel: 'antiscript',
-      fontFamily: '${options.fontFamily || '"Segoe UI", Arial, sans-serif'}',
+      fontFamily: '${safeFontFamily}',
     });
   </script>
+  // Explicitly run after content is set to avoid DOMContentLoaded timing races
+  mermaid.run();
 </body>
 </html>`;
 
@@ -119,11 +161,11 @@ export async function renderMermaidToSvg(
     return svg;
   } catch (error) {
     logger.warn(`Mermaid rendering failed: ${error}`);
-    // Return fallback with error message
+    // Return fallback with error message — escape all dynamic content
     return `<div class="mermaid-error">
       <p><strong>Mermaid Diagram Error</strong></p>
-      <pre><code>${diagram}</code></pre>
-      <p class="error-message">${error instanceof Error ? error.message : 'Unknown error'}</p>
+      <pre><code>${escapeHtml(diagram)}</code></pre>
+      <p class="error-message">${escapeHtml(error instanceof Error ? error.message : 'Unknown error')}</p>
     </div>`;
   } finally {
     await page.close();

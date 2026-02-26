@@ -22,10 +22,12 @@ A state-of-the-art Markdown to PDF converter that preserves the exact visual app
 - **Emoji Support**: Convert `:emoji:` shortcodes to unicode
 - **High-Fidelity Output**: Uses Puppeteer for pixel-perfect PDF generation
 
-### What's new in v1.1.0
-- Render YAML front matter as an HTML table in generated PDFs for clearer metadata presentation
-- Comprehensive security hardening (SRI for CDNs, improved escaping, stricter Mermaid security level)
-- Refactored CSS rendering into dedicated modules for improved maintainability
+### What's new in v1.1.1
+- Fixed 6 dependency vulnerabilities (critical path traversal, high ReDoS, prototype pollution, DoS)
+- XSS prevention: Mermaid diagram content is now base64-encoded instead of raw HTML injection
+- HTML escaping for container titles, details summaries, and fence fallback output
+- Image path traversal protection preventing reads outside the document directory
+- Hardened Puppeteer browser launch flags for both PDF and Mermaid rendering
 
 ## 📦 Installation
 
